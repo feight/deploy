@@ -1,0 +1,284 @@
+{
+    "required": [
+        "services"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "globalEnv": {
+            "description": "Global environment variables for all services.",
+            "items": {
+                "type": "string"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "services": {
+            "additionalProperties": {
+                "required": [
+                    "name",
+                    "targets"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "dockerfile": {
+                        "description": "Path to Dockerfile. Defaults to the working directory.",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Name of deployment.",
+                        "type": "string"
+                    },
+                    "open": {
+                        "description": "Open URL after deployment.",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "Path to service. This will be the working directory.",
+                        "type": "string"
+                    },
+                    "postdeploy": {
+                        "description": "Post deploy command.",
+                        "type": "string"
+                    },
+                    "prebuild": {
+                        "description": "Pre deploy command.",
+                        "type": "string"
+                    },
+                    "targets": {
+                        "additionalProperties": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "cloudLoadBalancer": {
+                                    "description": "Use Cloud Load Balancer as target.",
+                                    "required": [
+                                        "region",
+                                        "projectId",
+                                        "name"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "defaultService": {
+                                            "type": "string"
+                                        },
+                                        "environment": {
+                                            "description": "Environment variables available at runtime.",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "hostRules": {
+                                            "items": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "hosts": {
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": [
+                                                            "array",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "pathMatcher": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "pathMatchers": {
+                                            "items": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "defaultService": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "projectId": {
+                                            "type": "string"
+                                        },
+                                        "region": {
+                                            "enum": [
+                                                "africa-south1",
+                                                "europe-west1"
+                                            ],
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ]
+                                },
+                                "cloudrun": {
+                                    "description": "Use Cloud Run as target.",
+                                    "required": [
+                                        "region",
+                                        "projectId"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "cloudSqlInstances": {
+                                            "description": "Append the given values to the current Cloud SQL instances.",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "environment": {
+                                            "description": "Environment variables available at runtime.",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "projectId": {
+                                            "type": "string"
+                                        },
+                                        "region": {
+                                            "enum": [
+                                                "africa-south1",
+                                                "europe-west1"
+                                            ],
+                                            "type": "string"
+                                        },
+                                        "secrets": {
+                                            "description": "List of key-value pairs to set as secrets.",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "useHttp2": {
+                                            "description": "Enable HTTP2 end-to-end. Please see https://cloud.google.com/run/docs/configuring/http2.",
+                                            "type": "boolean"
+                                        },
+                                        "vpcConnector": {
+                                            "description": "Set a VPC connector for this resource.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ]
+                                },
+                                "kube": {
+                                    "description": "Use Kubernetes Engine as target.",
+                                    "required": [
+                                        "region",
+                                        "projectId"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "environment": {
+                                            "description": "Environment variables available at runtime.",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "projectId": {
+                                            "type": "string"
+                                        },
+                                        "region": {
+                                            "enum": [
+                                                "africa-south1",
+                                                "europe-west1"
+                                            ],
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ]
+                                },
+                                "registry": {
+                                    "description": "Do not deploy, just push to image registry.",
+                                    "required": [
+                                        "region",
+                                        "projectId"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "environment": {
+                                            "description": "Environment variables available at runtime.",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        },
+                                        "projectId": {
+                                            "type": "string"
+                                        },
+                                        "region": {
+                                            "enum": [
+                                                "africa-south1",
+                                                "europe-west1"
+                                            ],
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "type": [
+                            "object",
+                            "null"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "type": [
+                "object",
+                "null"
+            ]
+        }
+    },
+    "type": "object"
+}
