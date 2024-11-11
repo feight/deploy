@@ -1,0 +1,22 @@
+{
+    "$schema": "schema.json",
+
+    "services": {
+        "my-service": {
+            "name": "My Service",
+            "path": ".",
+            "targets": {
+                "stage": {
+                    "cloudrun": {
+                        "useHttp2": true,
+                        "region": "europe-west1",
+                        "projectId": "hello-world",
+                        "environment": []
+                    }
+                }
+            }
+        }
+    },
+
+    "globalEnv": []
+}

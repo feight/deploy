@@ -27,7 +27,11 @@ func updateProps(params jsonschema.InterceptSchemaParams) {
 
 	props := map[string]jsonschema.SchemaOrBool{}
 	for k, p := range params.Schema.Properties {
-		props[strcase.ToLowerCamel(k)] = p
+		if k == "$schema" {
+			props[k] = p // TODO: Fix this; need to be able to have json tags
+		} else {
+			props[strcase.ToLowerCamel(k)] = p
+		}
 	}
 
 	params.Schema.Properties = props

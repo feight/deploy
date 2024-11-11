@@ -1,6 +1,7 @@
 package deploy
 
 type Config struct {
+	Schema    string              `json:"$schema"`
 	Services  map[string]*Service `required:"true"`
 	GlobalEnv []string            `description:"Global environment variables for all services."`
 }

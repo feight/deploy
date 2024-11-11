@@ -4,6 +4,9 @@
     ],
     "additionalProperties": false,
     "properties": {
+        "$schema": {
+            "type": "string"
+        },
         "globalEnv": {
             "description": "Global environment variables for all services.",
             "items": {
