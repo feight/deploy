@@ -19,6 +19,7 @@ import (
 type DeployTarget interface {
 	Text() string
 	GetProject() string
+	GetImageRegistry() string
 	GetImageTag(*Service) string
 	Deploy(*Service)
 	PostDeploy(*Service)
@@ -223,7 +224,8 @@ func pushImage(s *Service, t DeployTarget) {
 	err := cmd.Run()
 
 	if err != nil {
-		panic(errors.Wrap(err, "could not push image"))
+		panic(errors.Wrapf(err,
+			`could not push image. you may need to run "gcloud auth configure-docker %s"`, t.GetImageRegistry()))
 	}
 }
 

@@ -10,6 +10,10 @@ func (s *GoogleTarget) GetProject() string {
 	return s.ProjectId
 }
 
+func (s *GoogleTarget) GetImageRegistry() string {
+	return fmt.Sprintf("%s-docker.pkg.dev", s.GetRegion())
+}
+
 func (s *GoogleTarget) GetImageTag(service *Service) string {
-	return fmt.Sprintf("%s-docker.pkg.dev/%s/newsteam/%s", s.GetRegion(), s.GetProject(), service.key)
+	return fmt.Sprintf("%s/%s/newsteam/%s", s.GetImageRegistry(), s.GetProject(), service.key)
 }
