@@ -11,5 +11,5 @@ func (s *GoogleTarget) GetProject() string {
 }
 
 func (s *GoogleTarget) GetImageTag(service *Service) string {
-	return fmt.Sprintf("%s-docker.pkg.dev/%s/%s", s.GetRegion(), s.GetProject(), service.key)
+	return fmt.Sprintf("%s-docker.pkg.dev/%s/newsteam/%s", s.GetRegion(), s.GetProject(), service.key)
 }
