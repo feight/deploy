@@ -20,7 +20,7 @@ var (
 	historyFilename   = path.Join(os.TempDir(), "newsteam.deploy.json")
 	listHeight        = 16
 	titleStyle        = lipgloss.NewStyle().MarginLeft(0)
-	itemStyle         = lipgloss.NewStyle().PaddingLeft(4).Foreground(lipgloss.Color("8")) // XTerm colors
+	itemStyle         = lipgloss.NewStyle().PaddingLeft(4).Foreground(lipgloss.Color("244")) // XTerm colors
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
 	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(2)
 	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(2).PaddingBottom(1)
