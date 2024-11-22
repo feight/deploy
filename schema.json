@@ -281,6 +281,10 @@
                 "object",
                 "null"
             ]
+        },
+        "useTurboRepo": {
+            "description": "Use Turbo Repo to perform build.",
+            "type": "boolean"
         }
     },
     "type": "object"

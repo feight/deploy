@@ -1,9 +1,10 @@
 package deploy
 
 type Config struct {
-	Schema    string              `json:"$schema"`
-	Services  map[string]*Service `required:"true"`
-	GlobalEnv []string            `description:"Global environment variables for all services."`
+	Schema       string              `json:"$schema"`
+	Services     map[string]*Service `required:"true"`
+	UseTurboRepo bool                `description:"Use Turbo Repo to perform build."`
+	GlobalEnv    []string            `description:"Global environment variables for all services."`
 }
 
 type Service struct {

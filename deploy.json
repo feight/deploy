@@ -1,5 +1,6 @@
 {
     "$schema": "schema.json",
+    "useTurboRepo": false,
 
     "services": {
         "my-service": {

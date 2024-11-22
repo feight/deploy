@@ -131,11 +131,22 @@ func runPrebuild(s *Service) {
 
 func runBuild(s *Service) {
 
-	runTurbo(s, "clean")
-	runTurbo(s, "build",
-		"--output-logs=errors-only",
-		"--no-cache",
-		"--force")
+	if conf.UseTurboRepo {
+
+		runTurbo(s, "clean")
+		runTurbo(s, "build",
+			"--output-logs=errors-only",
+			"--no-cache",
+			"--force")
+	} else {
+
+		cmd := exec.Command("npm", "run", "build")
+		err := cmd.Run()
+
+		if err != nil {
+			panic(errors.Wrap(err, "could not run npm build"))
+		}
+	}
 }
 
 func runTurbo(s *Service, args ...string) {
