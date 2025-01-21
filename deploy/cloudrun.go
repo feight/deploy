@@ -28,7 +28,7 @@ func (t *CloudRunTarget) Deploy(s *Service) {
 		"--update-labels", "type=backend",
 		"--max-instances", "2",
 		// "--memory", "2Gi",
-		"--cpu", "2")
+		"--cpu", "1")
 
 	cmd.Args = append(cmd.Args, []string{
 		"--set-env-vars", strings.Join(env(t.Environment), ",")}...)
