@@ -1,9 +1,11 @@
 package deploy
 
 import (
+	"cmp"
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -25,10 +27,10 @@ func (t *CloudRunTarget) Deploy(s *Service) {
 		"--platform", "managed",
 		"--image", t.GetImageTag(s),
 		"--allow-unauthenticated",
-		"--update-labels", "type=backend",
-		"--max-instances", "2",
-		// "--memory", "2Gi",
-		"--cpu", "1")
+		"--max-instances", cmp.Or(strconv.Itoa(t.MaxInstances), "2"),
+		"--concurrency", cmp.Or(strconv.Itoa(t.Concurrency), "10"),
+		"--memory", cmp.Or(t.Memory, "512Mi"),
+		"--cpu", cmp.Or(t.Cpu, "1"))
 
 	cmd.Args = append(cmd.Args, []string{
 		"--set-env-vars", strings.Join(env(t.Environment), ",")}...)

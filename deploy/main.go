@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/fatih/color"
@@ -32,7 +33,21 @@ var (
 func Start() {
 	defer onError()
 
-	conf = getConfig()
+	env := getEnv()
+
+	var conf *Config
+	for _, conf = range env.Config {
+		break
+	}
+
+	/*
+	 * Select environment.
+	 */
+
+	if len(env.Config) > 1 {
+		conf = tui.RenderList(env.Config, "s", "Which environment would you like to use?")
+		fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Environment"), color.CyanString(conf.key))
+	}
 
 	/*
 	 * Select service to deploy.
@@ -45,7 +60,7 @@ func Start() {
 	 * Select deployment target.
 	 */
 
-	target := tui.RenderList(service.Targets, "t", "Which target would you like to deploy?").get()
+	target := tui.RenderList(service.Targets, "t", "Where would you like to deploy?").get()
 	fmt.Printf("\n⏺ %s: %s", color.WhiteString("Deploy target"), color.CyanString(target.Text()))
 
 	/*
@@ -141,6 +156,10 @@ func runBuild(s *Service) {
 	} else {
 
 		cmd := exec.Command("npm", "run", "build")
+		cmd.Env = os.Environ()
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
 		err := cmd.Run()
 
 		if err != nil {
@@ -276,24 +295,50 @@ func (s *Target) get() DeployTarget {
 	panic("invalid target")
 }
 
-func getConfig() Config {
+func getEnv() Env {
+	env := Env{
+		Config: map[string]*Config{},
+	}
 
-	filename := "deploy.json"
+	matches, err := filepath.Glob("deploy*.json")
+	if err != nil {
+		panic(errors.Wrap(err, "could not get files"))
+	}
+
+	for _, filename := range matches {
+		env.Config[filename] = getConfig(filename)
+	}
+
+	return env
+}
+
+func getConfig(filename string) *Config {
 
 	bin, err := os.ReadFile(filename)
 	if err != nil {
 		panic(errors.Wrapf(err, "could not open %s", filename))
 	}
 
-	var conf Config
+	conf := Config{
+		key: filename,
+	}
+
 	json.Unmarshal(bin, &conf)
 
-	return conf
+	return &conf
 }
 
 // Combine global environment variables with e
 func env(e []string) []string {
 	return append(conf.GlobalEnv, e...)
+}
+
+func (s *Config) Text() string {
+	return s.key
+}
+
+func (s *Config) SetKey(key string) {
+	s.key = key
 }
 
 func (s *Service) Text() string {

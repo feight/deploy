@@ -154,6 +154,20 @@
                                                 "null"
                                             ]
                                         },
+                                        "concurrency": {
+                                            "description": "Set the maximum number of concurrent requests allowed per container instance. Leave concurrency unspecified or provide the special value 'default' to receive the server default value.",
+                                            "type": "integer"
+                                        },
+                                        "cpu": {
+                                            "description": "Set a CPU limit in Kubernetes cpu units.",
+                                            "enum": [
+                                                "1",
+                                                "2",
+                                                "4",
+                                                "8"
+                                            ],
+                                            "type": "string"
+                                        },
                                         "environment": {
                                             "description": "Environment variables available at runtime.",
                                             "items": {
@@ -163,6 +177,21 @@
                                                 "array",
                                                 "null"
                                             ]
+                                        },
+                                        "maxInstances": {
+                                            "description": "The maximum number of container instances for this Revision to run or 'default' to remove. This setting is immutably set on each new Revision and modifying its value will deploy another Revision.",
+                                            "type": "integer"
+                                        },
+                                        "memory": {
+                                            "description": "Set a memory limit.",
+                                            "enum": [
+                                                "512Mi",
+                                                "1Gi",
+                                                "2Gi",
+                                                "4Gi",
+                                                "8Gi"
+                                            ],
+                                            "type": "string"
                                         },
                                         "projectId": {
                                             "type": "string"

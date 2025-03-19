@@ -1,0 +1,23 @@
+{
+    "$schema": "schema.json",
+    "useTurboRepo": false,
+
+    "services": {
+        "my-service": {
+            "name": "My Service 2",
+            "path": ".",
+            "targets": {
+                "stage": {
+                    "cloudrun": {
+                        "useHttp2": true,
+                        "region": "europe-west1",
+                        "projectId": "hello-world",
+                        "environment": []
+                    }
+                }
+            }
+        }
+    },
+
+    "globalEnv": []
+}
