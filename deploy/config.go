@@ -44,8 +44,8 @@ type CloudRunTarget struct {
 	VpcConnector      string   `description:"Set a VPC connector for this resource."`
 	Cpu               string   `enum:"1,2,4,8" description:"Set a CPU limit in Kubernetes cpu units."`
 	Memory            string   `enum:"512Mi,1Gi,2Gi,4Gi,8Gi" description:"Set a memory limit."`
-	Concurrency       int      `description:"Set the maximum number of concurrent requests allowed per container instance. Leave concurrency unspecified or provide the special value 'default' to receive the server default value."`
-	MaxInstances      int      `description:"The maximum number of container instances for this Revision to run or 'default' to remove. This setting is immutably set on each new Revision and modifying its value will deploy another Revision."`
+	Concurrency       int      `description:"Set the maximum number of concurrent requests allowed per container instance."`
+	MaxInstances      int      `description:"The maximum number of container instances for this Revision."`
 }
 
 type KubernetesTarget struct {
