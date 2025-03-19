@@ -27,8 +27,8 @@ func (t *CloudRunTarget) Deploy(s *Service) {
 		"--platform", "managed",
 		"--image", t.GetImageTag(s),
 		"--allow-unauthenticated",
-		"--max-instances", cmp.Or(strconv.Itoa(t.MaxInstances), "2"),
-		"--concurrency", cmp.Or(strconv.Itoa(t.Concurrency), "10"),
+		"--max-instances", t.getMaxInstances(),
+		"--concurrency", t.getConcurrency(),
 		"--memory", cmp.Or(t.Memory, "512Mi"),
 		"--cpu", cmp.Or(t.Cpu, "1"))
 
@@ -60,6 +60,22 @@ func (t *CloudRunTarget) Deploy(s *Service) {
 	if err != nil {
 		panic(errors.Wrap(err, "could not complete deploy"))
 	}
+}
+
+func (t *CloudRunTarget) getConcurrency() string {
+
+	if t.Concurrency == 0 {
+		return "100"
+	}
+	return strconv.Itoa(t.Concurrency)
+}
+
+func (t *CloudRunTarget) getMaxInstances() string {
+
+	if t.MaxInstances == 0 {
+		return "2"
+	}
+	return strconv.Itoa(t.MaxInstances)
 }
 
 func (t *CloudRunTarget) PostDeploy(s *Service) {

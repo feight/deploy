@@ -150,8 +150,7 @@ func runBuild(s *Service) {
 		runTurbo(s, "clean")
 		runTurbo(s, "build",
 			"--output-logs=errors-only",
-			"--no-cache",
-			"--force")
+			"--cache=local:r,remote:r")
 	} else {
 
 		cmd := exec.Command("npm", "run", "build")
