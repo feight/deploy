@@ -148,13 +148,12 @@ func runBuild(s *Service) {
 	if conf.UseTurboRepo {
 
 		runTurbo(s, "clean")
-		runTurbo(s, "build",
-			"--output-logs=errors-only",
-			"--cache=local:r,remote:r")
+		runTurbo(s, "build", "--cache=local:r,remote:r")
 	} else {
 
 		cmd := exec.Command("npm", "run", "build")
 		cmd.Env = os.Environ()
+		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
@@ -178,6 +177,7 @@ func runTurbo(s *Service, args ...string) {
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, []string{"TURBO_NO_UPDATE_NOTIFIER=true"}...)
 	cmd.Dir = s.Path
+	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

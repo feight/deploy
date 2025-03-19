@@ -27,6 +27,7 @@ func (t *CloudRunTarget) Deploy(s *Service) {
 		"--platform", "managed",
 		"--image", t.GetImageTag(s),
 		"--allow-unauthenticated",
+		"--vpc-egress", "private-ranges-only",
 		"--max-instances", t.getMaxInstances(),
 		"--concurrency", t.getConcurrency(),
 		"--memory", cmp.Or(t.Memory, "512Mi"),
@@ -39,9 +40,6 @@ func (t *CloudRunTarget) Deploy(s *Service) {
 		cmd.Args = append(cmd.Args, "--use-http2")
 	} else {
 		cmd.Args = append(cmd.Args, "--no-use-http2")
-	}
-	if t.VpcConnector != "" {
-		cmd.Args = append(cmd.Args, "--vpc-connector", t.VpcConnector)
 	}
 	for _, val := range t.Secrets {
 		cmd.Args = append(cmd.Args, fmt.Sprintf("--update-secrets=%s", val))
