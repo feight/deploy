@@ -27,6 +27,7 @@ func (t *CloudRunTarget) Deploy(s *Service) {
 		"--platform", "managed",
 		"--image", t.GetImageTag(s),
 		"--allow-unauthenticated",
+		"--clear-vpc-connector",
 		"--vpc-egress", "private-ranges-only",
 		"--max-instances", t.getMaxInstances(),
 		"--concurrency", t.getConcurrency(),
