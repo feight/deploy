@@ -306,13 +306,14 @@ func getEnv() Env {
 	}
 
 	for _, filename := range matches {
-		env.Config[filename] = getConfig(filename)
+		conf := getConfig(filename)
+		env.Config[filename] = &conf
 	}
 
 	return env
 }
 
-func getConfig(filename string) *Config {
+func getConfig(filename string) Config {
 
 	bin, err := os.ReadFile(filename)
 	if err != nil {
@@ -325,7 +326,7 @@ func getConfig(filename string) *Config {
 
 	json.Unmarshal(bin, &conf)
 
-	return &conf
+	return conf
 }
 
 // Combine global environment variables with e
