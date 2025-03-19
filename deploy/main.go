@@ -148,7 +148,7 @@ func runBuild(s *Service) {
 	if conf.UseTurboRepo {
 
 		runTurbo(s, "clean")
-		runTurbo(s, "build", "--cache=local:r,remote:r")
+		runTurbo(s, "build", "--force")
 	} else {
 
 		cmd := exec.Command("npm", "run", "build")
