@@ -44,7 +44,7 @@ func Start() {
 	 */
 
 	if len(env.Config) > 1 {
-		conf = tui.RenderList(env.Config, "s", "Which environment would you like to use?")
+		conf = tui.RenderList(env.Config, "e", "Which environment would you like to use?")
 		fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Environment"), color.CyanString(conf.key))
 	}
 
