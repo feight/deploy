@@ -143,7 +143,7 @@ func runBuild(s *Service, t DeployTarget) {
 	if conf.UseTurboRepo {
 
 		runTurbo(s, t, "clean")
-		runTurbo(s, t, "build", "--force")
+		runTurbo(s, t, "build", "--env-mode=loose", "--force")
 	} else {
 
 		err := command(s, t, "npm", "run", "build").Run()
