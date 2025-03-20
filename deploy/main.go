@@ -24,6 +24,7 @@ type DeployTarget interface {
 	GetImageTag(*Service) string
 	Deploy(*Service)
 	PostDeploy(*Service)
+	GetEnvironment(*Service) []string
 }
 
 var (
@@ -99,7 +100,7 @@ func start(s *Service, t DeployTarget) {
 
 	beeep.Alert("Deployment", fmt.Sprintf("🎉 Successfully deployed %s to %s in %s.", s.Name, t.GetProject(), took), "")
 
-	postDeploy(s)
+	postDeploy(s, t)
 
 	t.PostDeploy(s)
 
@@ -112,17 +113,17 @@ func start(s *Service, t DeployTarget) {
 
 func createImage(s *Service, t DeployTarget) {
 
-	runPrebuild(s)
-	runBuild(s)
+	runPrebuild(s, t)
+	runBuild(s, t)
 
-	fmt.Printf("\n> Creating %s docker image...\n\n", color.YellowString(s.Name))
+	fmt.Printf("\n> Creating %s docker image [%s]...\n\n", color.YellowString(s.Name), t.GetImageTag(s))
 	runBuildImage(s, t)
 
 	fmt.Printf("\n> Pushing %s image to container registry...\n\n", color.YellowString(s.Name))
 	pushImage(s, t)
 }
 
-func runPrebuild(s *Service) {
+func runPrebuild(s *Service, t DeployTarget) {
 
 	if len(s.Prebuild) < 1 {
 		return
@@ -130,34 +131,22 @@ func runPrebuild(s *Service) {
 
 	name, args := bash(s.Prebuild)
 
-	cmd := exec.Command(name, args...)
-	cmd.Env = os.Environ()
-	cmd.Dir = s.Path
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	err := cmd.Run()
+	err := command(s, t, name, args...).Run()
 
 	if err != nil {
 		panic(errors.Wrap(err, "could not complete build"))
 	}
 }
 
-func runBuild(s *Service) {
+func runBuild(s *Service, t DeployTarget) {
 
 	if conf.UseTurboRepo {
 
-		runTurbo(s, "clean")
-		runTurbo(s, "build", "--force")
+		runTurbo(s, t, "clean")
+		runTurbo(s, t, "build", "--force")
 	} else {
 
-		cmd := exec.Command("npm", "run", "build")
-		cmd.Env = os.Environ()
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-
-		err := cmd.Run()
+		err := command(s, t, "npm", "run", "build").Run()
 
 		if err != nil {
 			panic(errors.Wrap(err, "could not run npm build"))
@@ -165,21 +154,15 @@ func runBuild(s *Service) {
 	}
 }
 
-func runTurbo(s *Service, args ...string) {
+func runTurbo(s *Service, t DeployTarget, args ...string) {
 
 	if _, err := os.Stat(path.Join(s.Path, "package.json")); err != nil {
 		return
 	}
 
-	cmd := exec.Command("npx", "turbo")
-
+	cmd := command(s, t, "npx", "turbo")
 	cmd.Args = append(cmd.Args, args...)
-	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, []string{"TURBO_NO_UPDATE_NOTIFIER=true"}...)
-	cmd.Dir = s.Path
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 
 	err := cmd.Run()
 
@@ -188,7 +171,7 @@ func runTurbo(s *Service, args ...string) {
 	}
 }
 
-func postDeploy(s *Service) {
+func postDeploy(s *Service, t DeployTarget) {
 
 	if len(s.Postdeploy) < 1 {
 		return
@@ -196,13 +179,7 @@ func postDeploy(s *Service) {
 
 	name, args := bash(s.Postdeploy)
 
-	cmd := exec.Command(name, args...)
-	cmd.Env = os.Environ()
-	cmd.Dir = s.Path
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	err := cmd.Run()
+	err := command(s, t, name, args...).Run()
 
 	if err != nil {
 		panic(errors.Wrap(err, "could not complete build"))
@@ -211,24 +188,19 @@ func postDeploy(s *Service) {
 
 func runBuildImage(s *Service, t DeployTarget) {
 
-	dockerfilePath := s.Path
-
-	if s.Dockerfile != "" {
-		dockerfilePath = path.Join(dockerfilePath, s.Dockerfile)
+	if s.Dockerfile == "" {
+		s.Dockerfile = "."
 	}
 
-	cmd := exec.Command(
+	cmd := command(
+		s,
+		t,
 		"docker",
 		"build",
 		"--platform", "linux/amd64",
 		"-t", t.GetImageTag(s),
-		dockerfilePath,
+		s.Dockerfile,
 	)
-
-	cmd.Env = os.Environ()
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
 
 	err := cmd.Run()
 
@@ -239,15 +211,13 @@ func runBuildImage(s *Service, t DeployTarget) {
 
 func pushImage(s *Service, t DeployTarget) {
 
-	cmd := exec.Command(
+	cmd := command(
+		s,
+		t,
 		"docker",
 		"push",
 		t.GetImageTag(s),
 	)
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
 
 	err := cmd.Run()
 
@@ -268,6 +238,21 @@ func cleanUp() {
 
 	cmd.Stderr = os.Stderr
 	cmd.Run()
+}
+
+func command(s *Service, t DeployTarget, name string, arg ...string) *exec.Cmd {
+
+	cmd := exec.Command(name, arg...)
+
+	cmd.Dir = s.Path
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, conf.GlobalEnv...)
+	cmd.Env = append(cmd.Env, t.GetEnvironment(s)...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd
 }
 
 func bash(command string) (string, []string) {

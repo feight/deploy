@@ -10,6 +10,10 @@ func (s *GoogleTarget) GetProject() string {
 	return s.ProjectId
 }
 
+func (s *GoogleTarget) GetEnvironment(*Service) []string {
+	return s.Environment
+}
+
 func (s *GoogleTarget) GetImageRegistry() string {
 	return fmt.Sprintf("%s-docker.pkg.dev", s.GetRegion())
 }
