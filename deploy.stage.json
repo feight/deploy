@@ -1,6 +1,7 @@
 {
     "$schema": "schema.json",
     "useTurboRepo": false,
+    "name": "Stage",
 
     "services": {
         "my-service": {

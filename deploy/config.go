@@ -6,6 +6,8 @@ type Env struct {
 
 type Config struct {
 	key          string
+	Name         string
+	IsProduction bool
 	Schema       string              `json:"$schema"`
 	Services     map[string]*Service `required:"true"`
 	UseTurboRepo bool                `description:"Use Turbo Repo to perform build."`

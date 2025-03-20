@@ -17,6 +17,12 @@
                 "null"
             ]
         },
+        "isProduction": {
+            "type": "boolean"
+        },
+        "name": {
+            "type": "string"
+        },
         "services": {
             "additionalProperties": {
                 "required": [
@@ -155,7 +161,7 @@
                                             ]
                                         },
                                         "concurrency": {
-                                            "description": "Set the maximum number of concurrent requests allowed per container instance. Leave concurrency unspecified or provide the special value 'default' to receive the server default value.",
+                                            "description": "Set the maximum number of concurrent requests allowed per container instance.",
                                             "type": "integer"
                                         },
                                         "cpu": {
@@ -179,7 +185,7 @@
                                             ]
                                         },
                                         "maxInstances": {
-                                            "description": "The maximum number of container instances for this Revision to run or 'default' to remove. This setting is immutably set on each new Revision and modifying its value will deploy another Revision.",
+                                            "description": "The maximum number of container instances for this Revision.",
                                             "type": "integer"
                                         },
                                         "memory": {
@@ -216,10 +222,6 @@
                                         "useHttp2": {
                                             "description": "Enable HTTP2 end-to-end. Please see https://cloud.google.com/run/docs/configuring/http2.",
                                             "type": "boolean"
-                                        },
-                                        "vpcConnector": {
-                                            "description": "Set a VPC connector for this resource.",
-                                            "type": "string"
                                         }
                                     },
                                     "type": [

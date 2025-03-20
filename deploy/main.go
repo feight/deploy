@@ -45,7 +45,7 @@ func Start() {
 
 	if len(env.Config) > 1 {
 		conf = tui.RenderList(env.Config, "e", "Which environment would you like to use?")
-		fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Environment"), color.CyanString(conf.key))
+		fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Environment"), conf.SelectedText())
 	}
 
 	/*
@@ -53,7 +53,7 @@ func Start() {
 	 */
 
 	service := tui.RenderList(conf.Services, "s", "What would you like to deploy?")
-	fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Deployment"), color.CyanString(service.Name))
+	fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Deployment"), color.CyanString(service.Text()))
 
 	/*
 	 * Select deployment target.
@@ -332,7 +332,28 @@ func env(e []string) []string {
 }
 
 func (s *Config) Text() string {
+
+	if s.Name != "" {
+		return fmt.Sprintf("%-20s (%s)", s.Name, s.key)
+	}
+
 	return s.key
+}
+
+func (s *Config) SelectedText() string {
+
+	ret := ""
+
+	if s.Name != "" {
+		ret = color.CyanString("%s (%s)", s.Name, s.key)
+	} else {
+		ret = color.CyanString(s.key)
+	}
+	if s.IsProduction {
+		ret += color.HiYellowString("  ⚠️ production")
+	}
+
+	return ret
 }
 
 func (s *Config) SetKey(key string) {
