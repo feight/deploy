@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"reflect"
+	"strconv"
 	"time"
 
 	"github.com/fatih/color"
@@ -41,10 +43,7 @@ func main() {
 	saveSchema()
 
 	env := getEnv()
-
-	for _, conf = range env.Config {
-		break
-	}
+	conf = env.defaultConfig()
 
 	/*
 	 * Select environment.
@@ -52,21 +51,27 @@ func main() {
 
 	if len(env.Config) > 1 {
 		conf = tui.RenderList(env.Config, "e", "Which environment would you like to use?")
-		fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Environment"), conf.SelectedText())
 	}
+
+	fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Environment"), conf.SelectedText())
 
 	/*
 	 * Select service to deploy.
 	 */
 
 	service := tui.RenderList(conf.Services, "s", "What would you like to deploy?")
-	fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Deployment"), color.CyanString(service.Text()))
+	fmt.Printf("\n⏺ %s: %s\n", color.WhiteString("Deployment"), color.CyanString(service.SelectedText()))
 
 	/*
 	 * Select deployment target.
 	 */
 
-	target := tui.RenderList(service.targetMap(), "t", "Where would you like to deploy?")
+	target := service.defaultTarget()
+
+	if len(service.targetMap()) > 1 {
+		target = tui.RenderList(service.targetMap(), "t", "Where would you like to deploy?")
+	}
+
 	fmt.Printf("\n⏺ %s: %s", color.WhiteString("Deploy target"), color.CyanString(target.Text()))
 
 	/*
@@ -283,6 +288,13 @@ func getEnv() Env {
 	return env
 }
 
+func (s *Env) defaultConfig() *Config {
+	for _, c := range s.Config {
+		return c
+	}
+	return nil
+}
+
 func getConfig(filename string) *Config {
 
 	bin, err := os.ReadFile(filename)
@@ -299,9 +311,83 @@ func getConfig(filename string) *Config {
 	return &conf
 }
 
+func (s *Config) Text() string {
+
+	if s.Name != "" {
+		return fmt.Sprintf("%-20s (%s)", s.Name, s.key)
+	}
+	return s.key
+}
+
+func (s *Config) SelectedText() string {
+
+	ret := ""
+	if s.Name != "" {
+		ret = color.CyanString("%s (%s)", s.Name, s.key)
+	} else {
+		ret = color.CyanString(s.key)
+	}
+	if s.IsProduction {
+		ret += color.HiYellowString("  ⚠️ production")
+	}
+
+	return ret
+}
+
+func (s *Config) SetKey(key string) {
+	s.key = key
+}
+
+func (s *Service) Text() string {
+
+	padding := len(s.Name)
+	for _, service := range conf.Services {
+		if len(service.Name) > padding {
+			padding = len(service.Name)
+		}
+	}
+
+	if len(s.targetMap()) > 1 {
+		return s.Name + " ..."
+	} else {
+		return fmt.Sprintf("%-*s %s", padding+5, s.Name, s.defaultTarget().Text())
+	}
+}
+
+func (s *Service) SelectedText() string {
+	return s.Name
+}
+
+func (s *Service) SetKey(key string) {
+	s.key = key
+}
+
+func (s *Service) targetMap() map[string]DeployTarget {
+
+	ret := map[string]DeployTarget{}
+	interfaceType := reflect.TypeOf((*DeployTarget)(nil)).Elem()
+	v := reflect.ValueOf(*s.Targets)
+	for i := range v.NumField() {
+		f := v.Field(i)
+		typ := v.Type().Field(i)
+		if typ.Type.Implements(interfaceType) && typ.IsExported() && !f.IsNil() {
+			ret[strconv.Itoa(i)] = f.Interface().(DeployTarget)
+		}
+	}
+
+	return ret
+}
+
+func (s *Service) defaultTarget() DeployTarget {
+	for _, t := range s.targetMap() {
+		return t
+	}
+	return nil
+}
+
 func saveSchema() {
 
-	do := flag.Bool("writeSchema", false, "writes the json schema for configuration")
+	do := flag.Bool("writeSchema", false, "write the json schema for configuration")
 	flag.Parse()
 
 	if *do {

@@ -131,7 +131,7 @@ func RenderList[T Option](opts map[string]T, key string, message string) T {
 		}
 	}
 
-	sort.Slice(sorted, func(i, j int) bool { return sorted[i].Text < sorted[j].Text })
+	sort.Slice(sorted, func(i, j int) bool { return sorted[i].Key < sorted[j].Key })
 
 	for _, v := range sorted {
 		items = append(items, Item{Key: v.Key, Text: v.Text})

@@ -34,7 +34,7 @@
             }
         },
         "my-service3": {
-            "name": "My Service 3",
+            "name": "My Amazing Service 3",
             "path": ".",
             "targets": {
                 "cloudrun": {
