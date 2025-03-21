@@ -15,9 +15,9 @@
                     "projectId": "hello-world",
                     "environment": []
                 },
-                "kube": {
+                "lambda": {
                     "region": "europe-west1",
-                    "projectId": "hello-world-kube"
+                    "projectId": "hello-world-lambda"
                 }
             }
         },

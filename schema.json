@@ -71,7 +71,7 @@
                                         "type": "string"
                                     },
                                     "environment": {
-                                        "description": "Environment variables available at runtime.",
+                                        "description": "Environment variables available at build time and runtime.",
                                         "items": {
                                             "type": "string"
                                         },
@@ -174,7 +174,7 @@
                                         "type": "string"
                                     },
                                     "environment": {
-                                        "description": "Environment variables available at runtime.",
+                                        "description": "Environment variables available at build time and runtime.",
                                         "items": {
                                             "type": "string"
                                         },
@@ -237,7 +237,41 @@
                                 "additionalProperties": false,
                                 "properties": {
                                     "environment": {
-                                        "description": "Environment variables available at runtime.",
+                                        "description": "Environment variables available at build time and runtime.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "projectId": {
+                                        "type": "string"
+                                    },
+                                    "region": {
+                                        "enum": [
+                                            "africa-south1",
+                                            "europe-west1"
+                                        ],
+                                        "type": "string"
+                                    }
+                                },
+                                "type": [
+                                    "object",
+                                    "null"
+                                ]
+                            },
+                            "lambda": {
+                                "description": "Use AWS Lambda as target.",
+                                "required": [
+                                    "region",
+                                    "projectId"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "environment": {
+                                        "description": "Environment variables available at build time and runtime.",
                                         "items": {
                                             "type": "string"
                                         },
@@ -271,7 +305,7 @@
                                 "additionalProperties": false,
                                 "properties": {
                                     "environment": {
-                                        "description": "Environment variables available at runtime.",
+                                        "description": "Environment variables available at build time and runtime.",
                                         "items": {
                                             "type": "string"
                                         },

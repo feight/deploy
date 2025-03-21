@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/feight/deploy/providers/aws"
 	"github.com/feight/deploy/providers/google"
 )
 
@@ -12,7 +13,7 @@ type Env struct {
 }
 
 type Config struct {
-	Key          string `json:"-"`
+	key          string
 	Name         string
 	IsProduction bool
 	Schema       string              `json:"$schema"`
@@ -22,7 +23,7 @@ type Config struct {
 }
 
 type Service struct {
-	Key        string  `json:"-"`
+	key        string
 	Name       string  `required:"true" description:"Name of deployment."`
 	Path       string  `required:"false" description:"Path to service. This will be the working directory."`
 	Dockerfile string  `description:"Path to Dockerfile. Defaults to the working directory."`
@@ -37,37 +38,33 @@ type Target struct {
 	Kube              *google.KubernetesTarget       `description:"Use Kubernetes Engine as target."`
 	Registry          *google.ArtifactRegistryTarget `description:"Do not deploy, just push to image registry."`
 	CloudLoadBalancer *google.LoadBalancerTarget     `description:"Use Cloud Load Balancer as target."`
+	Lambda            *aws.LambdaTarget              `description:"Use AWS Lambda as target."`
 }
-
-////////////////////
 
 func (s *Config) Text() string {
 
 	if s.Name != "" {
-		return fmt.Sprintf("%-20s (%s)", s.Name, s.Key)
+		return fmt.Sprintf("%-20s (%s)", s.Name, s.key)
 	}
-
-	return s.Key
+	return s.key
 }
 
 func (s *Config) SelectedText() string {
 
 	ret := ""
-
 	if s.Name != "" {
-		ret = color.CyanString("%s (%s)", s.Name, s.Key)
+		ret = color.CyanString("%s (%s)", s.Name, s.key)
 	} else {
-		ret = color.CyanString(s.Key)
+		ret = color.CyanString(s.key)
 	}
 	if s.IsProduction {
 		ret += color.HiYellowString("  ⚠️ production")
 	}
-
 	return ret
 }
 
 func (s *Config) SetKey(key string) {
-	s.Key = key
+	s.key = key
 }
 
 func (s *Service) Text() string {
@@ -75,5 +72,16 @@ func (s *Service) Text() string {
 }
 
 func (s *Service) SetKey(key string) {
-	s.Key = key
+	s.key = key
+}
+
+func (s *Service) targetMap() map[string]DeployTarget {
+
+	return map[string]DeployTarget{
+		"1": s.Targets.Cloudrun,
+		"2": s.Targets.Kube,
+		"3": s.Targets.Registry,
+		"4": s.Targets.CloudLoadBalancer,
+		"5": s.Targets.Lambda,
+	}
 }

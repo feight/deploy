@@ -56,7 +56,7 @@ func (t *KubernetesTarget) Deploy() {
 		"--image-pull-policy", "Always",
 	)
 
-	for _, v := range env([]string{} /*TODO: Globals*/, t.Environment) {
+	for _, v := range t.Environment {
 		cmd.Args = append(cmd.Args, []string{"--env", v}...)
 	}
 

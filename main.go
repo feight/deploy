@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,19 +15,20 @@ import (
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 
+	"github.com/feight/deploy/schema"
 	"github.com/feight/deploy/tui"
 )
 
 type DeployTarget interface {
-	Text() string
-	SetKey(string)
-	SetServiceName(string)
-	GetProject() string
+	Configure(serviceName string, env []string)
+	Deploy()
+	GetEnvironment() []string
 	GetImageRegistry() string
 	GetImageTag() string
-	Deploy()
+	GetProject() string
 	PostDeploy()
-	GetEnvironment() []string
+	SetKey(string)
+	Text() string
 }
 
 var (
@@ -34,9 +36,6 @@ var (
 )
 
 func main() {
-
-	fmt.Println("POES")
-	return
 	defer onError()
 
 	saveSchema()
@@ -67,7 +66,7 @@ func main() {
 	 * Select deployment target.
 	 */
 
-	target := tui.RenderList(getTargets(service), "t", "Where would you like to deploy?")
+	target := tui.RenderList(service.targetMap(), "t", "Where would you like to deploy?")
 	fmt.Printf("\n⏺ %s: %s", color.WhiteString("Deploy target"), color.CyanString(target.Text()))
 
 	/*
@@ -75,6 +74,7 @@ func main() {
 	 */
 
 	fmt.Println()
+	target.Configure(service.key, conf.GlobalEnv)
 	start(service, target)
 }
 
@@ -99,7 +99,6 @@ func start(s *Service, t DeployTarget) {
 	}
 
 	fmt.Printf("\n> Deploying %s to %s...\n\n", color.YellowString(s.Name), color.YellowString(t.GetProject()))
-	t.SetServiceName(s.Key)
 	t.Deploy()
 
 	took := time.Since(start).Round(time.Millisecond * 100).String()
@@ -254,7 +253,6 @@ func command(s *Service, t DeployTarget, name string, arg ...string) *exec.Cmd {
 
 	cmd.Dir = s.Path
 	cmd.Env = os.Environ()
-	cmd.Env = append(cmd.Env, conf.GlobalEnv...)
 	cmd.Env = append(cmd.Env, t.GetEnvironment()...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -266,16 +264,6 @@ func command(s *Service, t DeployTarget, name string, arg ...string) *exec.Cmd {
 func bash(command string) (string, []string) {
 
 	return "bash", []string{"-c", command}
-}
-
-func getTargets(s *Service) map[string]DeployTarget {
-
-	return map[string]DeployTarget{
-		"1": s.Targets.Cloudrun,
-		"2": s.Targets.Kube,
-		"3": s.Targets.Registry,
-		"4": s.Targets.CloudLoadBalancer,
-	}
 }
 
 func getEnv() Env {
@@ -303,7 +291,7 @@ func getConfig(filename string) *Config {
 	}
 
 	conf := Config{
-		Key: filename,
+		key: filename,
 	}
 
 	json.Unmarshal(bin, &conf)
@@ -313,13 +301,12 @@ func getConfig(filename string) *Config {
 
 func saveSchema() {
 
-	// do := flag.Bool("writeSchema", false, "writes the json schema file for configuration")
-	//
-	// flag.Parse()
-	//
-	//	if do != nil && *do {
-	//		schema, _ := schema.GetSchema(Config{})
-	//		b, _ := json.MarshalIndent(schema, "", "    ")
-	//		os.WriteFile("schema.json", b, os.ModePerm)
-	//	}
+	do := flag.Bool("writeSchema", false, "writes the json schema for configuration")
+	flag.Parse()
+
+	if *do {
+		schema, _ := schema.GetSchema(Config{})
+		b, _ := json.MarshalIndent(schema, "", "    ")
+		os.WriteFile("schema.json", b, os.ModePerm)
+	}
 }

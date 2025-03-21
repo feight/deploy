@@ -1,4 +1,3 @@
 
 test:
-	@go run ./schema
-	@go run .
+	@go run . -writeSchema

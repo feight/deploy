@@ -46,7 +46,7 @@ func (t *CloudRunTarget) Deploy() {
 		"--cpu", cmp.Or(t.Cpu, "1"))
 
 	cmd.Args = append(cmd.Args, []string{
-		"--set-env-vars", strings.Join(env([]string{} /*TODO: Globals*/, t.Environment), ",")}...)
+		"--set-env-vars", strings.Join(t.Environment, ",")}...)
 
 	if t.UseHttp2 {
 		cmd.Args = append(cmd.Args, "--use-http2")
