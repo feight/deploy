@@ -9,13 +9,51 @@
             "name": "My Service",
             "path": ".",
             "targets": {
-                "stage": {
-                    "cloudrun": {
-                        "useHttp2": true,
-                        "region": "europe-west1",
-                        "projectId": "hello-world",
-                        "environment": []
-                    }
+                "cloudrun": {
+                    "useHttp2": true,
+                    "region": "europe-west1",
+                    "projectId": "hello-world",
+                    "environment": []
+                },
+                "kube": {
+                    "region": "europe-west1",
+                    "projectId": "hello-world-kube"
+                }
+            }
+        },
+        "my-service2": {
+            "name": "My Service 2",
+            "path": ".",
+            "targets": {
+                "cloudrun": {
+                    "useHttp2": true,
+                    "region": "europe-west1",
+                    "projectId": "hello-world",
+                    "environment": []
+                }
+            }
+        },
+        "my-service3": {
+            "name": "My Service 3",
+            "path": ".",
+            "targets": {
+                "cloudrun": {
+                    "useHttp2": true,
+                    "region": "europe-west1",
+                    "projectId": "hello-world",
+                    "environment": []
+                }
+            }
+        },
+        "my-service4": {
+            "name": "My Service 4",
+            "path": ".",
+            "targets": {
+                "cloudrun": {
+                    "useHttp2": true,
+                    "region": "europe-west1",
+                    "projectId": "hello-world",
+                    "environment": []
                 }
             }
         }

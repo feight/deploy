@@ -19,6 +19,7 @@ import (
 
 type DeployTarget interface {
 	Text() string
+	SetKey(string)
 	GetProject() string
 	GetImageRegistry() string
 	GetImageTag(*Service) string
@@ -60,7 +61,7 @@ func Start() {
 	 * Select deployment target.
 	 */
 
-	target := tui.RenderList(service.Targets, "t", "Where would you like to deploy?").get()
+	target := tui.RenderList(getTargets(service), "t", "Where would you like to deploy?")
 	fmt.Printf("\n⏺ %s: %s", color.WhiteString("Deploy target"), color.CyanString(target.Text()))
 
 	/*
@@ -260,22 +261,14 @@ func bash(command string) (string, []string) {
 	return "bash", []string{"-c", command}
 }
 
-func (s *Target) get() DeployTarget {
+func getTargets(s *Service) map[string]DeployTarget {
 
-	if s.Cloudrun != nil {
-		return s.Cloudrun
+	return map[string]DeployTarget{
+		"1": s.Targets.Cloudrun,
+		"2": s.Targets.Kube,
+		"3": s.Targets.Registry,
+		"4": s.Targets.CloudLoadBalancer,
 	}
-	if s.Kube != nil {
-		return s.Kube
-	}
-	if s.Registry != nil {
-		return s.Registry
-	}
-	if s.CloudLoadBalancer != nil {
-		return s.CloudLoadBalancer
-	}
-
-	panic("invalid target")
 }
 
 func getEnv() Env {
@@ -352,9 +345,3 @@ func (s *Service) Text() string {
 func (s *Service) SetKey(key string) {
 	s.key = key
 }
-
-func (s *Target) Text() string {
-	return s.get().Text()
-}
-
-func (s *Target) SetKey(key string) {}

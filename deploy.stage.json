@@ -4,17 +4,15 @@
     "name": "Stage",
 
     "services": {
-        "my-service": {
-            "name": "My Service 2",
+        "my-service-stage": {
+            "name": "My Service Stage",
             "path": ".",
             "targets": {
-                "stage": {
-                    "cloudrun": {
-                        "useHttp2": true,
-                        "region": "europe-west1",
-                        "projectId": "hello-world",
-                        "environment": []
-                    }
+                "cloudrun": {
+                    "useHttp2": true,
+                    "region": "europe-west1",
+                    "projectId": "hello-world",
+                    "environment": []
                 }
             }
         }

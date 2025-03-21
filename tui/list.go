@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -83,7 +84,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "ctrl+c":
+		case "ctrl+c", "q":
 			m.quitting = true
 			return m, tea.Quit
 
@@ -106,7 +107,7 @@ func (m *model) View() string {
 		return ""
 	}
 	if m.quitting {
-		return ""
+		return "\n"
 	}
 	return "\n" + m.list.View()
 }
@@ -121,7 +122,9 @@ func RenderList[T Option](opts map[string]T, key string, message string) T {
 	)
 
 	for key, opt := range opts {
-		sorted = append(sorted, Item{Key: key, Text: opt.Text()})
+		if !reflect.ValueOf(opt).IsNil() {
+			sorted = append(sorted, Item{Key: key, Text: opt.Text()})
+		}
 	}
 
 	sort.Slice(sorted, func(i, j int) bool { return sorted[i].Text < sorted[j].Text })
@@ -131,6 +134,7 @@ func RenderList[T Option](opts map[string]T, key string, message string) T {
 	}
 
 	l := list.New(items, itemDelegate{}, defaultWidth, listHeight)
+	l.DisableQuitKeybindings()
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.Title = color.HiGreenString(fmt.Sprintf("%s\n%s\n%s", hr, message, hr))

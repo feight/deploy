@@ -16,13 +16,13 @@ type Config struct {
 
 type Service struct {
 	key        string
-	Name       string             `required:"true" description:"Name of deployment."`
-	Path       string             `required:"false" description:"Path to service. This will be the working directory."`
-	Dockerfile string             `description:"Path to Dockerfile. Defaults to the working directory."`
-	Prebuild   string             `description:"Pre deploy command."`
-	Postdeploy string             `description:"Post deploy command."`
-	Open       string             `description:"Open URL after deployment."`
-	Targets    map[string]*Target `required:"true"`
+	Name       string  `required:"true" description:"Name of deployment."`
+	Path       string  `required:"false" description:"Path to service. This will be the working directory."`
+	Dockerfile string  `description:"Path to Dockerfile. Defaults to the working directory."`
+	Prebuild   string  `description:"Pre deploy command."`
+	Postdeploy string  `description:"Post deploy command."`
+	Open       string  `description:"Open URL after deployment."`
+	Targets    *Target `required:"true"`
 }
 
 type Target struct {
@@ -33,6 +33,7 @@ type Target struct {
 }
 
 type GoogleTarget struct {
+	key         string
 	Region      string   `required:"true" enum:"africa-south1,europe-west1"`
 	ProjectId   string   `required:"true"`
 	Environment []string `description:"Environment variables available at runtime."`

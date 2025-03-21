@@ -56,249 +56,246 @@
                         "type": "string"
                     },
                     "targets": {
-                        "additionalProperties": {
-                            "additionalProperties": false,
-                            "properties": {
-                                "cloudLoadBalancer": {
-                                    "description": "Use Cloud Load Balancer as target.",
-                                    "required": [
-                                        "region",
-                                        "projectId",
-                                        "name"
-                                    ],
-                                    "additionalProperties": false,
-                                    "properties": {
-                                        "defaultService": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "cloudLoadBalancer": {
+                                "description": "Use Cloud Load Balancer as target.",
+                                "required": [
+                                    "region",
+                                    "projectId",
+                                    "name"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "defaultService": {
+                                        "type": "string"
+                                    },
+                                    "environment": {
+                                        "description": "Environment variables available at runtime.",
+                                        "items": {
                                             "type": "string"
                                         },
-                                        "environment": {
-                                            "description": "Environment variables available at runtime.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
-                                        },
-                                        "hostRules": {
-                                            "items": {
-                                                "additionalProperties": false,
-                                                "properties": {
-                                                    "hosts": {
-                                                        "items": {
-                                                            "type": "string"
-                                                        },
-                                                        "type": [
-                                                            "array",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "pathMatcher": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "pathMatchers": {
-                                            "items": {
-                                                "additionalProperties": false,
-                                                "properties": {
-                                                    "defaultService": {
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "hostRules": {
+                                        "items": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "hosts": {
+                                                    "items": {
                                                         "type": "string"
                                                     },
-                                                    "name": {
-                                                        "type": "string"
-                                                    }
+                                                    "type": [
+                                                        "array",
+                                                        "null"
+                                                    ]
                                                 },
-                                                "type": "object"
+                                                "pathMatcher": {
+                                                    "type": "string"
+                                                }
                                             },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
+                                            "type": "object"
                                         },
-                                        "projectId": {
-                                            "type": "string"
-                                        },
-                                        "region": {
-                                            "enum": [
-                                                "africa-south1",
-                                                "europe-west1"
-                                            ],
-                                            "type": "string"
-                                        }
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
                                     },
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ]
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "pathMatchers": {
+                                        "items": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "defaultService": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "projectId": {
+                                        "type": "string"
+                                    },
+                                    "region": {
+                                        "enum": [
+                                            "africa-south1",
+                                            "europe-west1"
+                                        ],
+                                        "type": "string"
+                                    }
                                 },
-                                "cloudrun": {
-                                    "description": "Use Cloud Run as target.",
-                                    "required": [
-                                        "region",
-                                        "projectId"
-                                    ],
-                                    "additionalProperties": false,
-                                    "properties": {
-                                        "cloudSqlInstances": {
-                                            "description": "Append the given values to the current Cloud SQL instances.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
-                                        },
-                                        "concurrency": {
-                                            "description": "Set the maximum number of concurrent requests allowed per container instance.",
-                                            "type": "integer"
-                                        },
-                                        "cpu": {
-                                            "description": "Set a CPU limit in Kubernetes cpu units.",
-                                            "enum": [
-                                                "1",
-                                                "2",
-                                                "4",
-                                                "8"
-                                            ],
-                                            "type": "string"
-                                        },
-                                        "environment": {
-                                            "description": "Environment variables available at runtime.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
-                                        },
-                                        "maxInstances": {
-                                            "description": "The maximum number of container instances for this Revision.",
-                                            "type": "integer"
-                                        },
-                                        "memory": {
-                                            "description": "Set a memory limit.",
-                                            "enum": [
-                                                "512Mi",
-                                                "1Gi",
-                                                "2Gi",
-                                                "4Gi",
-                                                "8Gi"
-                                            ],
-                                            "type": "string"
-                                        },
-                                        "projectId": {
-                                            "type": "string"
-                                        },
-                                        "region": {
-                                            "enum": [
-                                                "africa-south1",
-                                                "europe-west1"
-                                            ],
-                                            "type": "string"
-                                        },
-                                        "secrets": {
-                                            "description": "List of key-value pairs to set as secrets.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
-                                        },
-                                        "useHttp2": {
-                                            "description": "Enable HTTP2 end-to-end. Please see https://cloud.google.com/run/docs/configuring/http2.",
-                                            "type": "boolean"
-                                        }
-                                    },
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ]
-                                },
-                                "kube": {
-                                    "description": "Use Kubernetes Engine as target.",
-                                    "required": [
-                                        "region",
-                                        "projectId"
-                                    ],
-                                    "additionalProperties": false,
-                                    "properties": {
-                                        "environment": {
-                                            "description": "Environment variables available at runtime.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
-                                        },
-                                        "projectId": {
-                                            "type": "string"
-                                        },
-                                        "region": {
-                                            "enum": [
-                                                "africa-south1",
-                                                "europe-west1"
-                                            ],
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ]
-                                },
-                                "registry": {
-                                    "description": "Do not deploy, just push to image registry.",
-                                    "required": [
-                                        "region",
-                                        "projectId"
-                                    ],
-                                    "additionalProperties": false,
-                                    "properties": {
-                                        "environment": {
-                                            "description": "Environment variables available at runtime.",
-                                            "items": {
-                                                "type": "string"
-                                            },
-                                            "type": [
-                                                "array",
-                                                "null"
-                                            ]
-                                        },
-                                        "projectId": {
-                                            "type": "string"
-                                        },
-                                        "region": {
-                                            "enum": [
-                                                "africa-south1",
-                                                "europe-west1"
-                                            ],
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": [
-                                        "object",
-                                        "null"
-                                    ]
-                                }
+                                "type": [
+                                    "object",
+                                    "null"
+                                ]
                             },
-                            "type": "object"
+                            "cloudrun": {
+                                "description": "Use Cloud Run as target.",
+                                "required": [
+                                    "region",
+                                    "projectId"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "cloudSqlInstances": {
+                                        "description": "Append the given values to the current Cloud SQL instances.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "concurrency": {
+                                        "description": "Set the maximum number of concurrent requests allowed per container instance.",
+                                        "type": "integer"
+                                    },
+                                    "cpu": {
+                                        "description": "Set a CPU limit in Kubernetes cpu units.",
+                                        "enum": [
+                                            "1",
+                                            "2",
+                                            "4",
+                                            "8"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "environment": {
+                                        "description": "Environment variables available at runtime.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "maxInstances": {
+                                        "description": "The maximum number of container instances for this Revision.",
+                                        "type": "integer"
+                                    },
+                                    "memory": {
+                                        "description": "Set a memory limit.",
+                                        "enum": [
+                                            "512Mi",
+                                            "1Gi",
+                                            "2Gi",
+                                            "4Gi",
+                                            "8Gi"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "projectId": {
+                                        "type": "string"
+                                    },
+                                    "region": {
+                                        "enum": [
+                                            "africa-south1",
+                                            "europe-west1"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "secrets": {
+                                        "description": "List of key-value pairs to set as secrets.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "useHttp2": {
+                                        "description": "Enable HTTP2 end-to-end. Please see https://cloud.google.com/run/docs/configuring/http2.",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": [
+                                    "object",
+                                    "null"
+                                ]
+                            },
+                            "kube": {
+                                "description": "Use Kubernetes Engine as target.",
+                                "required": [
+                                    "region",
+                                    "projectId"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "environment": {
+                                        "description": "Environment variables available at runtime.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "projectId": {
+                                        "type": "string"
+                                    },
+                                    "region": {
+                                        "enum": [
+                                            "africa-south1",
+                                            "europe-west1"
+                                        ],
+                                        "type": "string"
+                                    }
+                                },
+                                "type": [
+                                    "object",
+                                    "null"
+                                ]
+                            },
+                            "registry": {
+                                "description": "Do not deploy, just push to image registry.",
+                                "required": [
+                                    "region",
+                                    "projectId"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "environment": {
+                                        "description": "Environment variables available at runtime.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "projectId": {
+                                        "type": "string"
+                                    },
+                                    "region": {
+                                        "enum": [
+                                            "africa-south1",
+                                            "europe-west1"
+                                        ],
+                                        "type": "string"
+                                    }
+                                },
+                                "type": [
+                                    "object",
+                                    "null"
+                                ]
+                            }
                         },
                         "type": [
                             "object",

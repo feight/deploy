@@ -2,6 +2,10 @@ package deploy
 
 import "fmt"
 
+func (s *GoogleTarget) SetKey(key string) {
+	s.key = key
+}
+
 func (s *GoogleTarget) GetRegion() string {
 	return s.Region
 }
