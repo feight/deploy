@@ -1,4 +1,4 @@
-package deploy
+package google
 
 import (
 	"encoding/json"
@@ -9,11 +9,31 @@ import (
 	"github.com/pkg/errors"
 )
 
+type LoadBalancerTarget struct {
+	GoogleTarget
+	LoadBalancerTargetRules
+	Name string `required:"true"`
+}
+
+type LoadBalancerTargetRules struct {
+	DefaultService string `json:"defaultService"`
+
+	HostRules []struct {
+		Hosts       []string `json:"hosts"`
+		PathMatcher string   `json:"pathMatcher"`
+	} `json:"hostRules"`
+
+	PathMatchers []struct {
+		DefaultService string `json:"defaultService"`
+		Name           string `json:"name"`
+	} `json:"pathMatchers"`
+}
+
 func (t *LoadBalancerTarget) Text() string {
 	return fmt.Sprintf("[%s, Google Cloud Load Balancer]", t.ProjectId)
 }
 
-func (t *LoadBalancerTarget) Deploy(s *Service) {
+func (t *LoadBalancerTarget) Deploy() {
 
 	b, _ := json.Marshal(t.LoadBalancerTargetRules)
 
@@ -43,5 +63,4 @@ func (t *LoadBalancerTarget) Deploy(s *Service) {
 	cmd.Wait()
 }
 
-func (t *LoadBalancerTarget) PostDeploy(s *Service) {
-}
+func (t *LoadBalancerTarget) PostDeploy() {}

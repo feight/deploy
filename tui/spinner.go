@@ -16,42 +16,11 @@ type spinnerModel struct {
 	spinner  spinner.Model
 	quitting bool
 	err      error
-
-	fn      func()
-	message string
+	fn       func()
+	message  string
 }
 
-type Complete struct {
-}
-
-/*
- * TODO: Implement AstroJS style spinner
- */
-
-// var colors = []string{
-// 	"#47DA93", "#3DA9A3", "#2387F1", "#3640FC",
-// 	"#5711F8", "#6B22EF", "#7B30E7", "#883AE3",
-// }
-
-// func customColor(idx int) string {
-// 	// TODO: Can "color" package do this?
-// 	var r, g, b int
-// 	fmt.Sscanf(colors[idx], "#%02x%02x%02x", &r, &g, &b)
-// 	return fmt.Sprintf("\x1b[38;2;%d;%d;%dm%s\x1b[0m", r, g, b, "█")
-// }
-
-// var frames = []string{
-// 	customColor(0) + customColor(1) + customColor(2) + customColor(3) + customColor(4) + customColor(5) + customColor(6) + customColor(7),
-// 	customColor(1) + customColor(2) + customColor(3) + customColor(4) + customColor(5) + customColor(6) + customColor(7) + customColor(0),
-// 	customColor(2) + customColor(3) + customColor(4) + customColor(5) + customColor(6) + customColor(7) + customColor(0) + customColor(1),
-// 	customColor(3) + customColor(4) + customColor(5) + customColor(6) + customColor(7) + customColor(0) + customColor(1) + customColor(2),
-// 	customColor(4) + customColor(5) + customColor(6) + customColor(7) + customColor(0) + customColor(1) + customColor(2) + customColor(3),
-// }
-
-// var gradient = spinner.Spinner{
-// 	Frames: frames,
-// 	FPS:    time.Second / 8, //nolint:gomnd
-// }
+type Complete struct{}
 
 func initialModel() *spinnerModel {
 
@@ -156,8 +125,8 @@ func (s *Cmd) Run() error {
 
 func Command(message string, name string, arg ...string) *Cmd {
 	return &Cmd{
-		message: message,
-		name:    name,
 		arg:     arg,
+		name:    name,
+		message: message,
 	}
 }

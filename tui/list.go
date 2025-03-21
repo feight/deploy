@@ -18,13 +18,13 @@ import (
 )
 
 var (
-	historyFilename   = path.Join(os.TempDir(), "newsteam.deploy.json")
 	listHeight        = 16
 	titleStyle        = lipgloss.NewStyle().MarginLeft(0)
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4).Foreground(lipgloss.Color("244")) // XTerm colors
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
 	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(2)
 	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(2).PaddingBottom(1)
+	historyFilename   = path.Join(os.TempDir(), "newsteam.deploy.json")
 )
 
 type Option interface {
@@ -48,7 +48,9 @@ type itemDelegate struct{}
 func (d itemDelegate) Height() int                               { return 1 }
 func (d itemDelegate) Spacing() int                              { return 0 }
 func (d itemDelegate) Update(msg tea.Msg, m *list.Model) tea.Cmd { return nil }
+
 func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
+
 	i, ok := listItem.(Item)
 	if !ok {
 		return
@@ -77,6 +79,7 @@ func (m *model) Init() tea.Cmd {
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.list.SetWidth(msg.Width)
@@ -103,6 +106,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) View() string {
+
 	if m.choice != "" {
 		return ""
 	}

@@ -1,4 +1,4 @@
-package deploy
+package google
 
 import (
 	"bytes"
@@ -13,6 +13,10 @@ import (
 
 	"github.com/feight/deploy/tui"
 )
+
+type KubernetesTarget struct {
+	GoogleTarget
+}
 
 func (t *KubernetesTarget) Text() string {
 	return fmt.Sprintf("[%s, Kubernetes Engine]", t.ProjectId)
@@ -39,20 +43,20 @@ func (t *KubernetesTarget) setCluster() {
 	}
 }
 
-func (t *KubernetesTarget) Deploy(s *Service) {
+func (t *KubernetesTarget) Deploy() {
 
 	t.setCluster()
-	t.Stop(s)
+	t.Stop()
 
 	cmd := exec.Command(
 		"kubectl",
 		"run",
-		s.key,
-		"--image", t.GetImageTag(s),
+		t.serviceName,
+		"--image", t.GetImageTag(),
 		"--image-pull-policy", "Always",
 	)
 
-	for _, v := range env(t.Environment) {
+	for _, v := range env([]string{} /*TODO: Globals*/, t.Environment) {
 		cmd.Args = append(cmd.Args, []string{"--env", v}...)
 	}
 
@@ -66,22 +70,22 @@ func (t *KubernetesTarget) Deploy(s *Service) {
 	}
 }
 
-func (t *KubernetesTarget) PostDeploy(s *Service) {
+func (t *KubernetesTarget) PostDeploy() {
 
 	fmt.Printf("> Waiting for logs...\n\n")
 
 	/* Wait 10s for the pod to start... */
 	time.Sleep(time.Second * 10)
 
-	t.TailLogs(s)
+	t.TailLogs()
 }
 
-func (t *KubernetesTarget) TailLogs(s *Service) {
+func (t *KubernetesTarget) TailLogs() {
 
 	cmd := exec.Command(
 		"kubectl",
 		"logs", "-f",
-		s.key,
+		t.serviceName,
 	)
 
 	var buf bytes.Buffer
@@ -99,18 +103,18 @@ func (t *KubernetesTarget) TailLogs(s *Service) {
 
 		time.Sleep(time.Second * 5)
 
-		t.TailLogs(s)
+		t.TailLogs()
 	}
 }
 
-func (t *KubernetesTarget) Stop(s *Service) {
+func (t *KubernetesTarget) Stop() {
 
 	cmd := tui.Command(
 		"Stopping pod...",
 		"kubectl",
 		"delete",
 		"pod",
-		s.key)
+		t.serviceName)
 
 	cmd.Env = os.Environ()
 	cmd.Stderr = os.Stderr
