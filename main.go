@@ -200,10 +200,6 @@ func postDeploy(s *Service, t DeployTarget) {
 
 func runBuildImage(s *Service, t DeployTarget) {
 
-	if s.Dockerfile == "" {
-		s.Dockerfile = "."
-	}
-
 	cmd := command(
 		s,
 		t,
@@ -211,8 +207,12 @@ func runBuildImage(s *Service, t DeployTarget) {
 		"build",
 		"--platform", "linux/amd64",
 		"-t", t.GetImageTag(),
-		s.Dockerfile,
+		".",
 	)
+
+	if s.Dockerfile == "" {
+		cmd.Args = append(cmd.Args, "-file", s.Dockerfile)
+	}
 
 	err := cmd.Run()
 
