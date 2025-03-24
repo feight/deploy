@@ -207,12 +207,13 @@ func runBuildImage(s *Service, t DeployTarget) {
 		"build",
 		"--platform", "linux/amd64",
 		"-t", t.GetImageTag(),
-		".",
 	)
 
 	if s.Dockerfile != "" {
 		cmd.Args = append(cmd.Args, "-file", s.Dockerfile)
 	}
+
+	cmd.Args = append(cmd.Args, ".")
 
 	err := cmd.Run()
 
