@@ -221,6 +221,43 @@
                                     "useHttp2": {
                                         "description": "Enable HTTP2 end-to-end. Please see https://cloud.google.com/run/docs/configuring/http2.",
                                         "type": "boolean"
+                                    },
+                                    "volumes": {
+                                        "description": "Add a volume mount to the container.",
+                                        "items": {
+                                            "required": [
+                                                "name",
+                                                "mountPath",
+                                                "sizeLimit"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "mountPath": {
+                                                    "description": "Mount path.",
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "description": "Name of the volume.",
+                                                    "type": "string"
+                                                },
+                                                "sizeLimit": {
+                                                    "description": "Set a size limit.",
+                                                    "enum": [
+                                                        "512Mi",
+                                                        "1Gi",
+                                                        "2Gi",
+                                                        "4Gi",
+                                                        "8Gi"
+                                                    ],
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
                                     }
                                 },
                                 "type": [
