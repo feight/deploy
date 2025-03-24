@@ -13,13 +13,20 @@ import (
 
 type CloudRunTarget struct {
 	GoogleTarget
-	UseHttp2          bool     `description:"Enable HTTP2 end-to-end. Please see https://cloud.google.com/run/docs/configuring/http2."`
-	CloudSqlInstances []string `description:"Append the given values to the current Cloud SQL instances."`
-	Secrets           []string `description:"List of key-value pairs to set as secrets."`
-	Cpu               string   `enum:"1,2,4,8" description:"Set a CPU limit in Kubernetes cpu units."`
-	Memory            string   `enum:"512Mi,1Gi,2Gi,4Gi,8Gi" description:"Set a memory limit."`
-	Concurrency       int      `description:"Set the maximum number of concurrent requests allowed per container instance."`
-	MaxInstances      int      `description:"The maximum number of container instances for this Revision."`
+	UseHttp2          bool             `description:"Enable HTTP2 end-to-end. Please see https://cloud.google.com/run/docs/configuring/http2."`
+	CloudSqlInstances []string         `description:"Append the given values to the current Cloud SQL instances."`
+	Secrets           []string         `description:"List of key-value pairs to set as secrets."`
+	Cpu               string           `enum:"1,2,4,8" description:"Set a CPU limit in Kubernetes cpu units."`
+	Memory            string           `enum:"512Mi,1Gi,2Gi,4Gi,8Gi" description:"Set a memory limit."`
+	Concurrency       int              `description:"Set the maximum number of concurrent requests allowed per container instance."`
+	MaxInstances      int              `description:"The maximum number of container instances for this Revision."`
+	Volumes           []CloudRunVolume `description:"Add a volume mount to the container."`
+}
+
+type CloudRunVolume struct {
+	Name      string `required:"true" description:"Name of the volume."`
+	MountPath string `required:"true" description:"Mount path."`
+	SizeLimit string `required:"true" enum:"512Mi,1Gi,2Gi,4Gi,8Gi" description:"Set a size limit."`
 }
 
 func (t *CloudRunTarget) Text() string {
@@ -58,6 +65,10 @@ func (t *CloudRunTarget) Deploy() {
 	}
 	for _, val := range t.CloudSqlInstances {
 		cmd.Args = append(cmd.Args, fmt.Sprintf("--add-cloudsql-instances=%s", val))
+	}
+	for _, val := range t.Volumes {
+		cmd.Args = append(cmd.Args, fmt.Sprintf("--add-volume=name=%s,type=in-memory,size-limit=%s", val.Name, val.SizeLimit))
+		cmd.Args = append(cmd.Args, fmt.Sprintf("--add-volume-mount=volume=%s,mount-path=%s", val.Name, val.MountPath))
 	}
 
 	cmd.Env = os.Environ()
