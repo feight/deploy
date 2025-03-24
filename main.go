@@ -211,7 +211,7 @@ func runBuildImage(s *Service, t DeployTarget) {
 	)
 
 	if s.Dockerfile == "" {
-		cmd.Args = append(cmd.Args, "-file", s.Dockerfile)
+		cmd.Args = append(cmd.Args, "--file", s.Dockerfile)
 	}
 
 	err := cmd.Run()
