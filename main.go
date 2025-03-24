@@ -37,6 +37,8 @@ var (
 	conf *Config
 )
 
+var test = 1
+
 func main() {
 	defer onError()
 
