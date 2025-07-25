@@ -33,6 +33,7 @@ type Service struct {
 type Target struct {
 	Cloudrun          *google.CloudRunTarget         `description:"Use Cloud Run as target."`
 	Kube              *google.KubernetesTarget       `description:"Use Kubernetes Engine as target."`
+	GCE               *google.GCETarget              `description:"Use Google Compute Engine as target."`
 	Registry          *google.ArtifactRegistryTarget `description:"Do not deploy, just push to image registry."`
 	CloudLoadBalancer *google.LoadBalancerTarget     `description:"Use Cloud Load Balancer as target."`
 	Lambda            *aws.LambdaTarget              `description:"Use AWS Lambda as target."`
