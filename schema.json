@@ -228,6 +228,48 @@
                                     "null"
                                 ]
                             },
+                            "gce": {
+                                "description": "Use Google Compute Engine as target.",
+                                "required": [
+                                    "region",
+                                    "projectId",
+                                    "zone",
+                                    "instanceName"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "environment": {
+                                        "description": "Environment variables available at build time and runtime.",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": [
+                                            "array",
+                                            "null"
+                                        ]
+                                    },
+                                    "instanceName": {
+                                        "type": "string"
+                                    },
+                                    "projectId": {
+                                        "type": "string"
+                                    },
+                                    "region": {
+                                        "enum": [
+                                            "africa-south1",
+                                            "europe-west1"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "zone": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": [
+                                    "object",
+                                    "null"
+                                ]
+                            },
                             "kube": {
                                 "description": "Use Kubernetes Engine as target.",
                                 "required": [
