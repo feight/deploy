@@ -1,14 +1,12 @@
 package google
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 	"time"
 
-	"github.com/fatih/color"
+	"github.com/feight/deploy/tui"
 	"github.com/pkg/errors"
 )
 
@@ -24,7 +22,21 @@ func (t *GCETarget) Text() string {
 
 func (t *GCETarget) Deploy() {
 
-	// t.Stop()
+	t.Stop()
+
+	dockerCmd := exec.Command(
+		"sudo",
+		"docker",
+		"run", "-d",
+		"--name", t.serviceName,
+		"--restart=always",
+		"--pull=always",
+		t.GetImageTag(),
+	)
+
+	for _, v := range t.Environment {
+		dockerCmd.Args = append(dockerCmd.Args, []string{"--env", v}...)
+	}
 
 	cmd := exec.Command(
 		"gcloud",
@@ -32,12 +44,8 @@ func (t *GCETarget) Deploy() {
 		"ssh",
 		"--zone", t.Zone, t.InstanceName,
 		"--project", t.ProjectId,
-		"--command", fmt.Sprintf("sudo docker run --name %s --restart=always --pull=always %s", t.serviceName, t.GetImageTag()),
+		"--command", dockerCmd.String(),
 	)
-
-	for _, v := range t.Environment {
-		cmd.Args = append(cmd.Args, []string{"--env", v}...)
-	}
 
 	cmd.Env = os.Environ()
 	cmd.Stderr = os.Stderr
@@ -51,52 +59,48 @@ func (t *GCETarget) Deploy() {
 
 func (t *GCETarget) PostDeploy() {
 
-	fmt.Printf("> Waiting for logs...\n\n")
+	fmt.Printf("> Tailing logs...\n\n")
 
-	/* Wait 10s for the pod to start... */
-	// time.Sleep(time.Second * 10)
+	/* Wait 2s for the pod to start... */
+	time.Sleep(time.Second * 2)
 
-	// t.TailLogs()
+	t.TailLogs()
 }
 
 func (t *GCETarget) TailLogs() {
 
 	cmd := exec.Command(
-		"kubectl",
-		"logs", "-f",
-		t.serviceName,
+		"gcloud",
+		"compute",
+		"ssh",
+		"--zone", t.Zone, t.InstanceName,
+		"--project", t.ProjectId,
+		"--command", exec.Command("sudo", "docker", "logs", "-f", t.serviceName).String(),
 	)
-
-	var buf bytes.Buffer
 
 	cmd.Env = os.Environ()
 	cmd.Stdout = os.Stdout
-	cmd.Stderr = &buf
+	cmd.Stderr = os.Stderr
 
-	err := cmd.Run()
-
-	if err != nil {
-
-		fmt.Printf("Waiting for pod to start (%s)...\n\n",
-			color.HiRedString("%s", strings.Trim(buf.String(), "\n")))
-
-		time.Sleep(time.Second * 5)
-
-		t.TailLogs()
-	}
+	cmd.Run()
 }
 
-// func (t *GCETarget) Stop() {
-//
-// 	cmd := tui.Command(
-// 		"Stopping pod...",
-// 		"kubectl",
-// 		"delete",
-// 		"pod",
-// 		t.serviceName)
-//
-// 	cmd.Env = os.Environ()
-// 	cmd.Stderr = os.Stderr
-//
-// 	cmd.Run()
-// }
+func (t *GCETarget) Stop() {
+
+	cmd := tui.Command(
+		"Stopping pod...",
+		"gcloud",
+		"compute",
+		"ssh",
+		"--zone", t.Zone, t.InstanceName,
+		"--project", t.ProjectId,
+		"--command", fmt.Sprintf("%s && %s",
+			exec.Command("sudo", "docker", "stop", t.serviceName).String(),
+			exec.Command("sudo", "docker", "rm", t.serviceName).String()),
+	)
+
+	cmd.Env = os.Environ()
+	cmd.Stderr = os.Stderr
+
+	cmd.Run()
+}
