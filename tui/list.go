@@ -18,7 +18,6 @@ import (
 )
 
 var (
-	listHeight        = 16
 	titleStyle        = lipgloss.NewStyle().MarginLeft(0)
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4).Foreground(lipgloss.Color("244")) // XTerm colors
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
@@ -137,7 +136,7 @@ func RenderList[T Option](opts map[string]T, key string, message string) T {
 		items = append(items, Item{Key: v.Key, Text: v.Text})
 	}
 
-	l := list.New(items, itemDelegate{}, defaultWidth, listHeight)
+	l := list.New(items, itemDelegate{}, defaultWidth, len(items)+8)
 	l.DisableQuitKeybindings()
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
