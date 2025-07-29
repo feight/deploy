@@ -31,12 +31,13 @@ func (t *GCETarget) Deploy() {
 		"--name", t.serviceName,
 		"--restart=always",
 		"--pull=always",
-		t.GetImageTag(),
 	)
 
 	for _, v := range t.Environment {
 		dockerCmd.Args = append(dockerCmd.Args, []string{"--env", v}...)
 	}
+
+	dockerCmd.Args = append(dockerCmd.Args, t.GetImageTag())
 
 	cmd := exec.Command(
 		"gcloud",
