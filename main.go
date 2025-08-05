@@ -309,6 +309,10 @@ func getConfig(filename string) *Config {
 
 	json.Unmarshal(bin, &conf)
 
+	for _, s := range conf.Services {
+		s.Name = s.getName()
+	}
+
 	return &conf
 }
 
@@ -342,23 +346,6 @@ func (s *Config) SetKey(key string) {
 func (s *Service) Text() string {
 
 	name := s.Name
-	b, err := os.ReadFile(path.Join(s.Path, "package.json"))
-	if err == nil {
-		var pkg struct {
-			Name        string
-			Description string
-		}
-
-		json.Unmarshal(b, &pkg)
-
-		if pkg.Name != "" && s.Name == "" {
-			name = pkg.Name
-		}
-		if pkg.Description != "" {
-			name += fmt.Sprintf(" (%s)", pkg.Description)
-		}
-	}
-
 	padding := len(name)
 	for _, service := range conf.Services {
 		if len(service.Name) > padding {
@@ -402,6 +389,30 @@ func (s *Service) defaultTarget() DeployTarget {
 		return t
 	}
 	return nil
+}
+
+func (s *Service) getName() string {
+
+	ret := s.Name
+
+	if b, err := os.ReadFile(path.Join(s.Path, "package.json")); err == nil {
+
+		var pkg struct {
+			Name        string
+			Description string
+		}
+
+		json.Unmarshal(b, &pkg)
+
+		if pkg.Name != "" && s.Name == "" {
+			ret = pkg.Name
+		}
+		if pkg.Description != "" {
+			ret += fmt.Sprintf(" - %s", pkg.Description)
+		}
+	}
+
+	return ret
 }
 
 func saveSchema() {
