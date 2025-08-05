@@ -21,7 +21,7 @@ type Config struct {
 
 type Service struct {
 	key        string
-	Name       string  `required:"true" description:"Name of deployment."`
+	Name       string
 	Path       string  `required:"false" description:"Path to service. This will be the working directory."`
 	Dockerfile string  `description:"Path to Dockerfile. Defaults to the working directory."`
 	Prebuild   string  `description:"Pre deploy command."`

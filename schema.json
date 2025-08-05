@@ -26,7 +26,6 @@
         "services": {
             "additionalProperties": {
                 "required": [
-                    "name",
                     "targets"
                 ],
                 "additionalProperties": false,
@@ -36,7 +35,6 @@
                         "type": "string"
                     },
                     "name": {
-                        "description": "Name of deployment.",
                         "type": "string"
                     },
                     "open": {

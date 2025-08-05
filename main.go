@@ -341,7 +341,25 @@ func (s *Config) SetKey(key string) {
 
 func (s *Service) Text() string {
 
-	padding := len(s.Name)
+	name := s.Name
+	b, err := os.ReadFile(path.Join(s.Path, "package.json"))
+	if err == nil {
+		var pkg struct {
+			Name        string
+			Description string
+		}
+
+		json.Unmarshal(b, &pkg)
+
+		if pkg.Name != "" && s.Name == "" {
+			name = pkg.Name
+		}
+		if pkg.Description != "" {
+			name += fmt.Sprintf(" (%s)", pkg.Description)
+		}
+	}
+
+	padding := len(name)
 	for _, service := range conf.Services {
 		if len(service.Name) > padding {
 			padding = len(service.Name)
@@ -349,9 +367,9 @@ func (s *Service) Text() string {
 	}
 
 	if len(s.targetMap()) > 1 {
-		return s.Name + " ..."
+		return name + " ..."
 	} else {
-		return fmt.Sprintf("%-*s %s", padding+5, s.Name, s.defaultTarget().Text())
+		return fmt.Sprintf("%-*s %s", padding+5, name, s.defaultTarget().Text())
 	}
 }
 
